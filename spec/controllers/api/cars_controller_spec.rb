@@ -31,4 +31,27 @@ RSpec.describe Api::CarsController, type: :controller do
 
 		expect(response.body).to include('Ford')
 	end
+
+	it "should create a new car and return it" do
+		post :create, :car => {
+			:make => "Nissan",
+			:model => "Sentra",
+			:year => 2008
+		}
+
+		expect(response.body).to include('Nissan')
+		expect(response.body).to include('null')
+
+	end
+
+	it "should return an error when make is not filled" do
+		post :create, :car => {
+			:make => "",
+			:model => "Sentra",
+			:year => 2008
+		}
+
+		expect(response.body).to include("Make can't be blank")
+
+	end
 end

@@ -22,15 +22,19 @@ class Api::CarsController < ApplicationController
 	end
 
 	def create
-		@car = Car.new
+		@car = Car.create(car_params)
 
-		@car.make = params[:make]
-		@car.model = params[:model]
-		@car.year = params[:year]
-		@car.garage_id = params[:garage_id]
-
-		@car.save
-		redirect_to @car
+		if @car.save
+			render json: @car
+		else
+			render json: @car.errors.full_messages
+		end
 	end
+
+	private
+	def car_params
+		params.require(:car).permit( :make, :model, :year, :garage_id)
+	end
+
 
 end

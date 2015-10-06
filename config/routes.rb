@@ -54,7 +54,7 @@ Rails.application.routes.draw do
   #     resources :products
   #   end
   namespace :api do
-    resources :cars
+    resources :cars, except: :create
     resources :garages do
       resources :cars
     end
