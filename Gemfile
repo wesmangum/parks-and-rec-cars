@@ -21,7 +21,7 @@ group :development do
   gem 'spring'
 end
 
-group :text do
+group :test do
 	gem 'fabrication'
 end
 
