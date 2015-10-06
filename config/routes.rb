@@ -54,10 +54,10 @@ Rails.application.routes.draw do
   #     resources :products
   #   end
   namespace :api do
-    resources :cars, except: :create
+    resources :cars
     resources :garages do
       resources :cars
     end
-    resources :users
+    resources :users, except: :index
   end
 end

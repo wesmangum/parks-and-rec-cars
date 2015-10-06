@@ -52,6 +52,5 @@ RSpec.describe Api::CarsController, type: :controller do
 		}
 
 		expect(response.body).to include("Make can't be blank")
-
 	end
 end
