@@ -21,3 +21,7 @@ group :development do
   gem 'spring'
 end
 
+group :text do
+	gem 'fabrication'
+end
+
