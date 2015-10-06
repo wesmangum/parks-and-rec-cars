@@ -55,6 +55,9 @@ Rails.application.routes.draw do
   #   end
   namespace :api do
     resources :cars
-    resources :garages
+    resources :garages do
+      resources :cars
+    end
+    resources :users
   end
 end

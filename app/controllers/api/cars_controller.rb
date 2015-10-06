@@ -1,12 +1,23 @@
 class Api::CarsController < ApplicationController
 
 	def index
-		@cars = Car.all
+		if params[:garage_id]
+			@cars = Car.find_by(garage_id: params[:garage_id])
+		else
+			@cars = Car.all
+		end
 		render json: @cars
 	end
 
 	def show
-		@car = Car.find_by_id(params[:id])
+		if params[:garage_id]
+			@car = Car.find_by(
+				garage_id: params[:garage_id],
+				id: params[:id]
+			)
+		else
+			@car = Car.find_by_id(params[:id])
+		end
 		render json: @car
 	end
 
