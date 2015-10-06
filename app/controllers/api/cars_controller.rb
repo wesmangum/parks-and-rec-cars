@@ -27,7 +27,9 @@ class Api::CarsController < ApplicationController
 		if @car.save
 			render json: @car
 		else
-			render json: @car.errors.full_messages
+			render json: {
+				errors: @car.errors.full_messages
+			}, status: 422
 		end
 	end
 

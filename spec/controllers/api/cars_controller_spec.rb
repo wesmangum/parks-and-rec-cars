@@ -51,6 +51,7 @@ RSpec.describe Api::CarsController, type: :controller do
 			:year => 2008
 		}
 
+		expect(response.status).to equal(422)
 		expect(response.body).to include("Make can't be blank")
 	end
 end
