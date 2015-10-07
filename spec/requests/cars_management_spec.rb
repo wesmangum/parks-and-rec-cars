@@ -34,12 +34,12 @@ RSpec.describe "Cars Management", type: :request do
 		  	post api_garage_cars_path( garage_1, :car => {
 		  		:make => "Nissan",
 		  		:model => "Sentra",
-		  		:year => 2008,
-		  		:garage_id => garage_1.id
+		  		:year => 2008
 		  	})
 
 		  	expect(response.status).to equal(201)
 		  	expect(response.body).to include('Nissan')
+		  	expect(response.body).to include(garage_1.id.to_s)
 		  	expect(garage_1.cars.count).to eq(2)
 		  end
 
@@ -47,8 +47,7 @@ RSpec.describe "Cars Management", type: :request do
 		  	put api_garage_car_path( garage_1, :car => {
 		  		:make => "Nissan",
 		  		:model => "Sentra",
-		  		:year => 2008,
-		  		:garage_id => garage_1.id
+		  		:year => 2008
 		  	},
 		  	id: car_1.id )
 
@@ -76,8 +75,7 @@ RSpec.describe "Cars Management", type: :request do
 		  	post api_garage_cars_path( garage_1, :car => {
 		  		:make => "",
 		  		:model => "Sentra",
-		  		:year => 2008,
-		  		:garage_id => garage_1.id
+		  		:year => 2008
 		  	})
 
 		  	expect(response.status).to equal(422)

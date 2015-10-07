@@ -26,6 +26,10 @@ class Api::CarsController < ApplicationController
 	end
 
 	def create
+		if params[:garage_id]
+			params[:car][:garage_id] = params[:garage_id]
+		end
+
 		@car = Car.create(car_params)
 
 		if @car.save
