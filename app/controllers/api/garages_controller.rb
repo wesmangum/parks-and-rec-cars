@@ -6,7 +6,7 @@ class Api::GaragesController < ApplicationController
 	end
 
 	def show
-		@garage = Garage.find_by_id(params[:id])
+		@garage = Garage.find(params[:id])
 		render json: @garage
 	end
 
@@ -23,7 +23,7 @@ class Api::GaragesController < ApplicationController
 	end
 
 	def update
-		@garage = Garage.find_by_id(params[:id])
+		@garage = Garage.find(params[:id])
 		@garage.update(garage_params)
 		if @garage.save
 			render json: @garage, status: 204
@@ -31,6 +31,14 @@ class Api::GaragesController < ApplicationController
 			render json: {
 				errors: @garage.errors.full_messages
 			}, status: 422
+		end
+	end
+
+	def destroy
+		@garage = Garage.find(params[:id])
+
+		if @garage.destroy
+			render json: @garage, status: 204
 		end
 	end
 
