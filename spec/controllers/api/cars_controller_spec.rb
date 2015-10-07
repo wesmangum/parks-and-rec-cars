@@ -38,6 +38,7 @@ RSpec.describe Api::CarsController, type: :controller do
 	  		:year => 2008
 	  	}
 
+	  	expect(response.status).to equal(201)
 	  	expect(response.body).to include('Nissan')
 	  end
 

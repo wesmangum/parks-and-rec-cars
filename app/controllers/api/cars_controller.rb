@@ -25,7 +25,7 @@ class Api::CarsController < ApplicationController
 		@car = Car.create(car_params)
 
 		if @car.save
-			render json: @car
+			render json: @car, status: 201
 		else
 			render json: {
 				errors: @car.errors.full_messages
