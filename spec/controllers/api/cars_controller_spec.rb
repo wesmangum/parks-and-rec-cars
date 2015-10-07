@@ -8,13 +8,13 @@ RSpec.describe Api::CarsController, type: :controller do
 			make: "Ford",
 			model: "Pinto",
 			year: 1971,
-			garage: @garage_1
+			garage: garage_1
 		) }
 	let!(:car_2) { Fabricate(:car,
 			make: "Toyota",
 			model: "Prius",
 			year: 2015,
-			garage: @garage_2
+			garage: garage_2
 		) }
 
 	describe "Happy Path" do
@@ -40,6 +40,7 @@ RSpec.describe Api::CarsController, type: :controller do
 
 	  	expect(response.status).to equal(201)
 	  	expect(response.body).to include('Nissan')
+	  	expect(response.body).to include('null')
 	  end
 
 	  it "should update a car and save it" do
@@ -57,6 +58,13 @@ RSpec.describe Api::CarsController, type: :controller do
 	  	get :show, id: car_2.id
 
 	  	expect(response.body).to include('Nissan')
+	  end
+
+	  it 'should delete a car from the database' do
+	  	delete :destroy, id: car_1.id
+
+	  	expect(response.status).to eq(204)
+	  	expect(Car.all.count).to eq(1)
 	  end
 	end
 
