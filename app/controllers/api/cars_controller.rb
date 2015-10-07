@@ -33,10 +33,21 @@ class Api::CarsController < ApplicationController
 		end
 	end
 
+	def update
+		@car = Car.find_by_id(params[:id])
+		@car.update(car_params)
+		if @car.save
+			render json: @car, status: 204
+		else
+			render json: {
+				errors: @car.errors.full_messages
+			}, status: 422
+		end
+	end
+
 	private
 	def car_params
 		params.require(:car).permit( :make, :model, :year, :garage_id)
 	end
-
 
 end
