@@ -58,6 +58,6 @@ Rails.application.routes.draw do
     resources :garages do
       resources :cars
     end
-    resources :users, except: :index
+    resources :users
   end
 end
