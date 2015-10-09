@@ -1,5 +1,6 @@
 class Api::CarsController < ApplicationController
 	rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
+	before_action :authenticate
 
 	def index
 		if params[:garage_id]
@@ -84,5 +85,12 @@ class Api::CarsController < ApplicationController
 			message: error.message
 		}, status: 404
 	end
+
+
+	def authenticate
+      authenticate_or_request_with_http_token do |token, options|
+        	@current_user = User.find_by(authentication_token: token)
+      end
+    end
 
 end

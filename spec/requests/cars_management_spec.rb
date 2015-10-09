@@ -1,8 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe "Cars Management", type: :request do
-	let!(:garage_1) { Fabricate(:garage, name: "Leslie's Garage") }
-	let!(:garage_2) { Fabricate(:garage, name: "Andy's Garage") }
+	let!(:user_1) { Fabricate(:user) }
+	let!(:user_2) { Fabricate(:user,
+			email: "leslie.knope@pawnee.gov",
+			password: "pancakes"
+		) }
+	let!(:garage_1) { Fabricate(:garage,
+			name: "Leslie's Garage",
+			user: user_1
+		) }
+	let!(:garage_2) { Fabricate(:garage,
+			name: "Andy's Garage",
+			user: user_2
+		) }
 	let!(:car_1) { Fabricate(:car,
 			make: "Ford",
 			model: "Pinto",
@@ -15,17 +26,23 @@ RSpec.describe "Cars Management", type: :request do
 			year: 2015,
 			garage: garage_2
 		) }
+	before(:each) do
+		@env = Hash.new
+		@env["CONTENT_TYPE"] = "application/json"
+		@env["ACCEPT"] = "application/json"
+		@env["HTTP_AUTHORIZATION"] = "Token token=#{user_1.authentication_token}"
+	end
 
 	describe "cars in garages" do
 		describe "Happy Path" do
 		  it "returns the all the cars in the garage" do
-		    get api_garage_cars_path( garage_1 )
+		    get api_garage_cars_path( garage_1 ), nil, @env
 
 		    expect(response.body).to include('Ford')
 		  end
 
 		  it "returns a specific car in the garage" do
-		    get api_garage_car_path( garage_1, car_1 )
+		    get api_garage_car_path( garage_1, car_1 ), nil, @env
 
 		    expect(response.body).to include('Ford')
 		  end
@@ -35,7 +52,7 @@ RSpec.describe "Cars Management", type: :request do
 		  		:make => "Nissan",
 		  		:model => "Sentra",
 		  		:year => 2008
-		  	})
+		  	}), nil, @env
 
 		  	expect(response.status).to equal(201)
 		  	expect(response.body).to include('Nissan')
@@ -49,13 +66,13 @@ RSpec.describe "Cars Management", type: :request do
 		  		:model => "Sentra",
 		  		:year => 2008
 		  	},
-		  	id: car_1.id )
+		  	id: car_1.id ), nil, @env
 
 		  	expect(response.status).to equal(204)
 		  end
 
 		  it 'deletes the car from the database' do
-		  	delete api_garage_car_path( garage_1, car_1 )
+		  	delete api_garage_car_path( garage_1, car_1 ), nil, @env
 
 		  	expect(response.status).to eq(204)
 		  	expect(Car.all.count).to eq(1)
@@ -65,7 +82,7 @@ RSpec.describe "Cars Management", type: :request do
 
 		describe "Sad Path" do
 		  it "should try and get a car from a garage and error out" do
-		  	get api_garage_car_path( garage_1, car_2 )
+		  	get api_garage_car_path( garage_1, car_2 ), nil, @env
 
 		  	expect(response.status).to equal(404)
 		  	expect(response.body).to include("Couldn't find Car with 'id'=#{car_2.id}")
@@ -76,7 +93,7 @@ RSpec.describe "Cars Management", type: :request do
 		  		:make => "",
 		  		:model => "Sentra",
 		  		:year => 2008
-		  	})
+		  	}), nil, @env
 
 		  	expect(response.status).to equal(422)
 		  	expect(response.body).to include("Make can't be blank")
@@ -84,7 +101,7 @@ RSpec.describe "Cars Management", type: :request do
 		  end
 
 		  it "should try and delete a car from a different garage and error out" do
-		  	delete api_garage_car_path( garage_1, car_2 )
+		  	delete api_garage_car_path( garage_1, car_2 ), nil, @env
 
 		  	expect(response.status).to eq(404)
 		  	expect(response.body).to include("Couldn't find Car with 'id'=#{car_2.id}")

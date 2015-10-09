@@ -2,8 +2,19 @@ require 'rails_helper'
 require 'fabrication'
 
 RSpec.describe Api::CarsController, type: :controller do
-	let!(:garage_1) { Fabricate(:garage, name: "Leslie's Garage") }
-	let!(:garage_2) { Fabricate(:garage, name: "Andy's Garage") }
+	let!(:user_1) { Fabricate(:user) }
+	let!(:user_2) { Fabricate(:user,
+			email: "leslie.knope@pawnee.gov",
+			password: "pancakes"
+		) }
+	let!(:garage_1) { Fabricate(:garage,
+			name: "Leslie's Garage",
+			user: user_1
+		) }
+	let!(:garage_2) { Fabricate(:garage,
+			name: "Andy's Garage",
+			user: user_2
+		) }
 	let!(:car_1) { Fabricate(:car,
 			make: "Ford",
 			model: "Pinto",
@@ -16,6 +27,9 @@ RSpec.describe Api::CarsController, type: :controller do
 			year: 2015,
 			garage: garage_2
 		) }
+	before(:each) do
+		@request.env["HTTP_AUTHORIZATION"] = "Token token=#{user_1.authentication_token}"
+	end
 
 	describe "Happy Path" do
 	  it "should return all the cars" do

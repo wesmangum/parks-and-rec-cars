@@ -1,6 +1,7 @@
 class User < ActiveRecord::Base
 	validates :email, presence: true
 	before_create :set_auth_token
+	has_many :garages
 
 	private
 	def set_auth_token

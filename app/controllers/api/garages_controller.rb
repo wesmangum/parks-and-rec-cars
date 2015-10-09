@@ -1,4 +1,5 @@
 class Api::GaragesController < ApplicationController
+	before_action :authenticate
 
 	def index
 		@garages = Garage.all
