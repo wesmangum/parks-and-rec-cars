@@ -25,13 +25,21 @@ class Api::GaragesController < ApplicationController
 
 	def update
 		@garage = Garage.find(params[:id])
-		@garage.update(garage_params)
-		if @garage.save
-			render json: @garage, status: 204
+
+		if !@garage.nil? && @garage.user == @current_user
+			@garage.update(garage_params)
+			if @garage.save
+				render json: @garage, status: 204
+			else
+				render json: {
+					errors: @garage.errors.full_messages
+				}, status: 422
+			end
 		else
 			render json: {
-				errors: @garage.errors.full_messages
-			}, status: 422
+				error: "Not Authorized",
+				message: "not allowed to update? this #{@garage.inspect}"
+			}, status: 403
 		end
 	end
 

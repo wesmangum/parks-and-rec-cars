@@ -92,11 +92,27 @@ RSpec.describe Api::GaragesController, type: :controller do
 				:garage => {
 					:name => "",
 				},
-				:id => garage_2
+				:id => garage_1
 			}
 
 			expect(response.status).to equal(422)
 			expect(response.body).to include("Name can't be blank")
+
+			@garage = Garage.find_by_id( garage_2 )
+			expect(@garage.name).to eq("Andy's Garage")
+		end
+
+		it "should try to update a garage and return an error when auth token is incorrect" do
+			put :update, {
+				:garage => {
+					:name => "New Garage",
+				},
+				:id => garage_2
+			}
+
+			expect(response.status).to equal(403)
+			expect(response.body).to include("not allowed to update?")
+			expect(response.body).to include("Andy's Garage")
 
 			@garage = Garage.find_by_id( garage_2 )
 			expect(@garage.name).to eq("Andy's Garage")
