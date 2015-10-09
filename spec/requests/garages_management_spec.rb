@@ -41,69 +41,69 @@ RSpec.describe "Garages Management", type: :request do
 	describe "garages belonging to users" do
 		describe "Happy Path" do
 		  it "returns the all the garages belonging to a user" do
-		    get api_user_garages_path( user_1 ), nil, @env
+			get api_user_garages_path( user_1 ), nil, @env
 
-		    expect(response.body).to include("Leslie's Garage")
+			expect(response.body).to include("Leslie's Garage")
 		  end
 
 		  it "returns a specific garage belonging to a user" do
-		    get api_user_garage_path( user_1, garage_1 ), nil, @env
+			get api_user_garage_path( user_1, garage_1 ), nil, @env
 
-		    expect(response.body).to include("Leslie's Garage")
+			expect(response.body).to include("Leslie's Garage")
 		  end
 
 		  it "creates a garage associated with a specific user" do
-		  	post api_user_garages_path( garage_1, :garage => {
-		  		:name => "New Garage"
-		  	}), nil, @env
+			post api_user_garages_path( garage_1, :garage => {
+				:name => "New Garage"
+			}), nil, @env
 
-		  	expect(response.status).to equal(201)
-		  	expect(response.body).to include('New Garage')
-		  	expect(response.body).to include(garage_1.id.to_s)
-		  	expect(user_1.garages.count).to eq(1)
+			expect(response.status).to equal(201)
+			expect(response.body).to include('New Garage')
+			expect(response.body).to include(garage_1.id.to_s)
+			expect(user_1.garages.count).to eq(1)
 		  end
 
 		  it "updates a garage associated with a specific user" do
-		  	put api_user_garage_path( garage_1, :garage => {
-		  		:name => "New Garage"
-		  	},
-		  	id: car_1.id ), nil, @env
+			put api_user_garage_path( garage_1, :garage => {
+				:name => "New Garage"
+			},
+			id: car_1.id ), nil, @env
 
-		  	expect(response.status).to equal(204)
+			expect(response.status).to equal(204)
 		  end
 
 		  it 'deletes the garage from the database' do
-		  	delete api_user_garage_path( user_1, garage_1 ), nil, @env
+			delete api_user_garage_path( user_1, garage_1 ), nil, @env
 
-		  	expect(response.status).to eq(204)
-		  	expect(Garage.all.count).to eq(1)
-		  	expect(user_1.garages.count).to eq(0)
+			expect(response.status).to eq(204)
+			expect(Garage.all.count).to eq(1)
+			expect(user_1.garages.count).to eq(0)
 		  end
 		end
 
 		describe "Sad Path" do
 		  it "should try and get a garage from a user and error out" do
-		  	get api_user_garage_path( user_1, garage_2 ), nil, @env
+			get api_user_garage_path( user_1, garage_2 ), nil, @env
 
-		  	expect(response.status).to equal(404)
-		  	expect(response.body).to include("Couldn't find Garage with 'id'=#{garage_2.id}")
+			expect(response.status).to equal(404)
+			expect(response.body).to include("Couldn't find Garage with 'id'=#{garage_2.id}")
 		  end
 
 		  it "should try and create a garage for a specific user and error out" do
-		  	post api_user_garages_path( user_1, :garage => {
-		  		:name => "",
-		  	}), nil, @env
+			post api_user_garages_path( user_1, :garage => {
+				:name => "",
+			}), nil, @env
 
-		  	expect(response.status).to equal(422)
-		  	expect(response.body).to include("Name can't be blank")
-		  	expect(garage_1.cars.count).to eq(1)
+			expect(response.status).to equal(422)
+			expect(response.body).to include("Name can't be blank")
+			expect(garage_1.cars.count).to eq(1)
 		  end
 
 		  it "should try and delete a garage from a different user and error out" do
-		  	delete api_user_garage_path( user_1, garage_2 ), nil, @env
+			delete api_user_garage_path( user_1, garage_2 ), nil, @env
 
-		  	expect(response.status).to eq(404)
-		  	expect(response.body).to include("Couldn't find Garage with 'id'=#{garage_2.id}")
+			expect(response.status).to eq(404)
+			expect(response.body).to include("Couldn't find Garage with 'id'=#{garage_2.id}")
 		  end
 		end
 	end

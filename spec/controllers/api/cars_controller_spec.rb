@@ -33,95 +33,95 @@ RSpec.describe Api::CarsController, type: :controller do
 
 	describe "Happy Path" do
 	  it "should return all the cars" do
-	  	get :index
+		get :index
 
-	  	expect(response.body).to include('Ford')
-	  	expect(response.body).to include('Toyota')
+		expect(response.body).to include('Ford')
+		expect(response.body).to include('Toyota')
 	  end
 
 	  it "should return the single, correct car" do
-	  	get :show, id: car_1.id
+		get :show, id: car_1.id
 
-	  	expect(response.body).to include('Ford')
+		expect(response.body).to include('Ford')
 	  end
 
 	  it "should create a new car and return it" do
-	  	post :create, :car => {
-	  		:make => "Nissan",
-	  		:model => "Sentra",
-	  		:year => 2008
-	  	}
+		post :create, :car => {
+			:make => "Nissan",
+			:model => "Sentra",
+			:year => 2008
+		}
 
-	  	expect(response.status).to equal(201)
-	  	expect(response.body).to include('Nissan')
-	  	expect(response.body).to include('null')
+		expect(response.status).to equal(201)
+		expect(response.body).to include('Nissan')
+		expect(response.body).to include('null')
 	  end
 
 	  it "should update a car and save it" do
-	  	put :update, {
-	  		:car => {
-	  			:make => "Nissan",
-	  			:model => "Sentra",
-	  			:year => 2008
-	  		},
-	  		:id => car_1
-	  	}
+		put :update, {
+			:car => {
+				:make => "Nissan",
+				:model => "Sentra",
+				:year => 2008
+			},
+			:id => car_1
+		}
 
-	  	expect(response.status).to equal(204)
+		expect(response.status).to equal(204)
 
-	  	get :show, id: car_1.id
+		get :show, id: car_1.id
 
-	  	expect(response.body).to include('Nissan')
+		expect(response.body).to include('Nissan')
 	  end
 
 	  it 'should delete a car from the database' do
-	  	delete :destroy, id: car_1.id
+		delete :destroy, id: car_1.id
 
-	  	expect(response.status).to eq(204)
-	  	expect(Car.all.count).to eq(1)
+		expect(response.status).to eq(204)
+		expect(Car.all.count).to eq(1)
 	  end
 	end
 
 	describe "Sad Path" do
 	  it "should try to create a car and return an error when make is not filled" do
-	  	post :create, :car => {
-	  		:make => "",
-	  		:model => "Sentra",
-	  		:year => 2008
-	  	}
+		post :create, :car => {
+			:make => "",
+			:model => "Sentra",
+			:year => 2008
+		}
 
-	  	expect(response.status).to equal(422)
-	  	expect(response.body).to include("Make can't be blank")
-	  	expect(Car.where( :model => "Sentra")).to_not exist
+		expect(response.status).to equal(422)
+		expect(response.body).to include("Make can't be blank")
+		expect(Car.where( :model => "Sentra")).to_not exist
 	  end
 
 	  it "should try to update a car and return an error when make is not filled" do
-	  	put :update, {
-	  		:car => {
-	  			:make => "",
-	  			:model => "Ion",
-	  			:year => 2008
-	  		},
-	  		:id => car_1
-	  	}
+		put :update, {
+			:car => {
+				:make => "",
+				:model => "Ion",
+				:year => 2008
+			},
+			:id => car_1
+		}
 
-	  	expect(response.status).to equal(422)
-	  	expect(response.body).to include("Make can't be blank")
-	  	expect(Car.where( :model => "Ion")).to_not exist
+		expect(response.status).to equal(422)
+		expect(response.body).to include("Make can't be blank")
+		expect(Car.where( :model => "Ion")).to_not exist
 	  end
 
 	  it "should try to update a car and return an error when auth token is invalid" do
-	  	put :update, {
-	  		:car => {
-	  			:make => "Nissan",
-	  			:model => "Sentra",
-	  			:year => 2008
-	  		},
-	  		:id => car_2
-	  	}
+		put :update, {
+			:car => {
+				:make => "Nissan",
+				:model => "Sentra",
+				:year => 2008
+			},
+			:id => car_2
+		}
 
-	  	expect(response.status).to equal(403)
-	  	expect(response.body).to include("not allowed to update?")
+		expect(response.status).to equal(403)
+		expect(response.body).to include("not allowed to update?")
 	  end
 	end
 end

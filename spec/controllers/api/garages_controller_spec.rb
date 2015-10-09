@@ -46,35 +46,35 @@ RSpec.describe Api::GaragesController, type: :controller do
 		end
 
 		it "should create a new garage and return it" do
-		  	post :create, :garage => {
-		  		:name => "New Garage"
-		  	}
+			post :create, :garage => {
+				:name => "New Garage"
+			}
 
-		  	expect(response.status).to equal(201)
-		  	expect(response.body).to include('New Garage')
-	  	end
+			expect(response.status).to equal(201)
+			expect(response.body).to include('New Garage')
+		end
 
-	  	it "should update a garage and save it" do
-	  		put :update, {
-	  			:garage => {
-	  				:name => "Newer Garage"
-	  			},
-	  			:id => garage_1
-	  		}
+		it "should update a garage and save it" do
+			put :update, {
+				:garage => {
+					:name => "Newer Garage"
+				},
+				:id => garage_1
+			}
 
-	  		expect(response.status).to equal(204)
+			expect(response.status).to equal(204)
 
-	  		@garage = Garage.find(garage_1.id)
+			@garage = Garage.find(garage_1.id)
 
-	  		expect(@garage.name).to eq('Newer Garage')
-	  	end
+			expect(@garage.name).to eq('Newer Garage')
+		end
 
-	  	it 'should delete a garage from the database' do
-	  		delete :destroy, id: garage_1.id
+		it 'should delete a garage from the database' do
+			delete :destroy, id: garage_1.id
 
-	  		expect(response.status).to eq(204)
-	  		expect(Garage.all.count).to eq(1)
-	  	end
+			expect(response.status).to eq(204)
+			expect(Garage.all.count).to eq(1)
+		end
 	end
 
 	describe "Sad Path" do

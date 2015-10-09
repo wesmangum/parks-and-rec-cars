@@ -36,110 +36,110 @@ RSpec.describe "Cars Management", type: :request do
 	describe "cars in garages" do
 		describe "Happy Path" do
 		  it "returns the all the cars in the garage" do
-		    get api_garage_cars_path( garage_1 ), nil, @env
+			get api_garage_cars_path( garage_1 ), nil, @env
 
-		    expect(response.body).to include('Ford')
+			expect(response.body).to include('Ford')
 		  end
 
 		  it "returns a specific car in the garage" do
-		    get api_garage_car_path( garage_1, car_1 ), nil, @env
+			get api_garage_car_path( garage_1, car_1 ), nil, @env
 
-		    expect(response.body).to include('Ford')
+			expect(response.body).to include('Ford')
 		  end
 
 		  it "creates a car associated with a specific garage" do
-		  	post api_garage_cars_path( garage_1, :car => {
-		  		:make => "Nissan",
-		  		:model => "Sentra",
-		  		:year => 2008
-		  	}), nil, @env
+			post api_garage_cars_path( garage_1, :car => {
+				:make => "Nissan",
+				:model => "Sentra",
+				:year => 2008
+			}), nil, @env
 
-		  	expect(response.status).to equal(201)
-		  	expect(response.body).to include('Nissan')
-		  	expect(response.body).to include(garage_1.id.to_s)
-		  	expect(garage_1.cars.count).to eq(2)
+			expect(response.status).to equal(201)
+			expect(response.body).to include('Nissan')
+			expect(response.body).to include(garage_1.id.to_s)
+			expect(garage_1.cars.count).to eq(2)
 		  end
 
 		  it "updates a car associated with a specific garage" do
-		  	put api_garage_car_path( garage_1, :car => {
-		  		:make => "Nissan",
-		  		:model => "Sentra",
-		  		:year => 2008
-		  	},
-		  	id: car_1.id ), nil, @env
+			put api_garage_car_path( garage_1, :car => {
+				:make => "Nissan",
+				:model => "Sentra",
+				:year => 2008
+			},
+			id: car_1.id ), nil, @env
 
-		  	expect(response.status).to equal(204)
-		  	@car = Car.find(car_1.id)
-		  	expect(@car.make).to eq("Nissan")
+			expect(response.status).to equal(204)
+			@car = Car.find(car_1.id)
+			expect(@car.make).to eq("Nissan")
 		  end
 
 		  it 'deletes the car from the database' do
-		  	delete api_garage_car_path( garage_1, car_1 ), nil, @env
+			delete api_garage_car_path( garage_1, car_1 ), nil, @env
 
-		  	expect(response.status).to eq(204)
-		  	expect(Car.all.count).to eq(1)
-		  	expect(garage_1.cars.count).to eq(0)
+			expect(response.status).to eq(204)
+			expect(Car.all.count).to eq(1)
+			expect(garage_1.cars.count).to eq(0)
 		  end
 		end
 
 		describe "Sad Path" do
 		  it "should try and get a car from a garage and error out" do
-		  	get api_garage_car_path( garage_1, car_2 ), nil, @env
+			get api_garage_car_path( garage_1, car_2 ), nil, @env
 
-		  	expect(response.status).to equal(404)
-		  	expect(response.body).to include("Couldn't find Car with 'id'=#{car_2.id}")
+			expect(response.status).to equal(404)
+			expect(response.body).to include("Couldn't find Car with 'id'=#{car_2.id}")
 		  end
 
 		  it "should try and create a car for a specific garage and error out" do
-		  	post api_garage_cars_path( garage_1, :car => {
-		  		:make => "",
-		  		:model => "Sentra",
-		  		:year => 2008
-		  	}), nil, @env
+			post api_garage_cars_path( garage_1, :car => {
+				:make => "",
+				:model => "Sentra",
+				:year => 2008
+			}), nil, @env
 
-		  	expect(response.status).to equal(422)
-		  	expect(response.body).to include("Make can't be blank")
-		  	expect(garage_1.cars.count).to eq(1)
+			expect(response.status).to equal(422)
+			expect(response.body).to include("Make can't be blank")
+			expect(garage_1.cars.count).to eq(1)
 		  end
 
 		  it "should try and update a car for a specific garage and error out" do
-		  	put api_garage_car_path( garage_1, :car => {
-		  		:make => "",
-		  		:model => "Sentra",
-		  		:year => 2008
-		  	},
-		  	id: car_1.id ), nil, @env
+			put api_garage_car_path( garage_1, :car => {
+				:make => "",
+				:model => "Sentra",
+				:year => 2008
+			},
+			id: car_1.id ), nil, @env
 
-		  	expect(response.status).to equal(422)
-		  	expect(response.body).to include("Make can't be blank")
-		  	expect(garage_1.cars.count).to eq(1)
+			expect(response.status).to equal(422)
+			expect(response.body).to include("Make can't be blank")
+			expect(garage_1.cars.count).to eq(1)
 		  end
 
 		  it "should try to update a car for a specific garage and return an error when auth token is invalid" do
-		  	put api_garage_car_path( garage_1, :car => {
-		  		:make => "",
-		  		:model => "Sentra",
-		  		:year => 2008
-		  	},
-		  	id: car_2.id ), nil, @env
+			put api_garage_car_path( garage_1, :car => {
+				:make => "",
+				:model => "Sentra",
+				:year => 2008
+			},
+			id: car_2.id ), nil, @env
 
-		  	expect(response.status).to equal(403)
-		  	expect(response.body).to include("not allowed to update?")
+			expect(response.status).to equal(403)
+			expect(response.body).to include("not allowed to update?")
 
-		  	@car = Car.find(car_2.id)
+			@car = Car.find(car_2.id)
 
-		  	expect(@car.make).to eq("Toyota")
+			expect(@car.make).to eq("Toyota")
 		  end
 
 		  it "should try and delete a car from a different garage and error out" do
-		  	delete api_garage_car_path( garage_1, car_2 ), nil, @env
+			delete api_garage_car_path( garage_1, car_2 ), nil, @env
 
-		  	expect(response.status).to equal(403)
-		  	expect(response.body).to include("not allowed to update?")
+			expect(response.status).to equal(403)
+			expect(response.body).to include("not allowed to update?")
 
-		  	@car = Car.find(car_2.id)
+			@car = Car.find(car_2.id)
 
-		  	expect(@car.make).to eq("Toyota")
+			expect(@car.make).to eq("Toyota")
 		  end
 		end
 	end
