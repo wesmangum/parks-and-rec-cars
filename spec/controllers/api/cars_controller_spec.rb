@@ -64,12 +64,12 @@ RSpec.describe Api::CarsController, type: :controller do
 	  			:model => "Sentra",
 	  			:year => 2008
 	  		},
-	  		:id => car_2
+	  		:id => car_1
 	  	}
 
 	  	expect(response.status).to equal(204)
 
-	  	get :show, id: car_2.id
+	  	get :show, id: car_1.id
 
 	  	expect(response.body).to include('Nissan')
 	  end
@@ -102,12 +102,26 @@ RSpec.describe Api::CarsController, type: :controller do
 	  			:model => "Ion",
 	  			:year => 2008
 	  		},
-	  		:id => car_2
+	  		:id => car_1
 	  	}
 
 	  	expect(response.status).to equal(422)
 	  	expect(response.body).to include("Make can't be blank")
 	  	expect(Car.where( :model => "Ion")).to_not exist
+	  end
+
+	  it "should try to update a car and return an error when auth token is invalid" do
+	  	put :update, {
+	  		:car => {
+	  			:make => "Nissan",
+	  			:model => "Sentra",
+	  			:year => 2008
+	  		},
+	  		:id => car_2
+	  	}
+
+	  	expect(response.status).to equal(403)
+	  	expect(response.body).to include("not allowed to update?")
 	  end
 	end
 end

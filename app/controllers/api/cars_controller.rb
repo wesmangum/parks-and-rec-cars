@@ -43,34 +43,39 @@ class Api::CarsController < ApplicationController
 	end
 
 	def update
-		if params[:garage_id]
-			@garage = Garage.find(params[:garage_id])
-			@car = @garage.cars.find(params[:id])
-		else
-			@car = Car.find(params[:id])
-		end
+		@car = Car.find(params[:id])
+		@garage = Garage.find(@car.garage_id)
+		@user = User.find(@garage.user_id)
 
-		@car.update(car_params)
-
-		if @car.save
-			render json: @car, status: 204
+		if !@car.nil? && @user == @current_user
+			@car.update(car_params)
+			if @car.save
+				render json: @car, status: 204
+			else
+				render json: {
+					errors: @car.errors.full_messages
+				}, status: 422
+			end
 		else
 			render json: {
-				errors: @car.errors.full_messages
-			}, status: 422
+				error: "Not Authorized",
+				message: "not allowed to update? this #{@car.inspect}"
+			}, status: 403
 		end
 	end
 
 	def destroy
-		if params[:garage_id]
-			@garage = Garage.find(params[:garage_id])
-			@car = @garage.cars.find(params[:id])
-		else
-			@car = Car.find(params[:id])
-		end
+		@car = Car.find(params[:id])
 
-		if @car.destroy
-			render json: @car, status: 204
+		if @car.garage.user == @current_user
+			if @car.destroy
+				render json: @car, status: 204
+			end
+		else
+			render json: {
+				error: "Not Authorized",
+				message: "not allowed to update? this #{@var.inspect}"
+			}, status: 403
 		end
 	end
 

@@ -69,6 +69,8 @@ RSpec.describe "Cars Management", type: :request do
 		  	id: car_1.id ), nil, @env
 
 		  	expect(response.status).to equal(204)
+		  	@car = Car.find(car_1.id)
+		  	expect(@car.make).to eq("Nissan")
 		  end
 
 		  it 'deletes the car from the database' do
@@ -100,11 +102,44 @@ RSpec.describe "Cars Management", type: :request do
 		  	expect(garage_1.cars.count).to eq(1)
 		  end
 
+		  it "should try and update a car for a specific garage and error out" do
+		  	put api_garage_car_path( garage_1, :car => {
+		  		:make => "",
+		  		:model => "Sentra",
+		  		:year => 2008
+		  	},
+		  	id: car_1.id ), nil, @env
+
+		  	expect(response.status).to equal(422)
+		  	expect(response.body).to include("Make can't be blank")
+		  	expect(garage_1.cars.count).to eq(1)
+		  end
+
+		  it "should try to update a car for a specific garage and return an error when auth token is invalid" do
+		  	put api_garage_car_path( garage_1, :car => {
+		  		:make => "",
+		  		:model => "Sentra",
+		  		:year => 2008
+		  	},
+		  	id: car_2.id ), nil, @env
+
+		  	expect(response.status).to equal(403)
+		  	expect(response.body).to include("not allowed to update?")
+
+		  	@car = Car.find(car_2.id)
+
+		  	expect(@car.make).to eq("Toyota")
+		  end
+
 		  it "should try and delete a car from a different garage and error out" do
 		  	delete api_garage_car_path( garage_1, car_2 ), nil, @env
 
-		  	expect(response.status).to eq(404)
-		  	expect(response.body).to include("Couldn't find Car with 'id'=#{car_2.id}")
+		  	expect(response.status).to equal(403)
+		  	expect(response.body).to include("not allowed to update?")
+
+		  	@car = Car.find(car_2.id)
+
+		  	expect(@car.make).to eq("Toyota")
 		  end
 		end
 	end
