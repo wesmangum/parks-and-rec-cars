@@ -1,4 +1,5 @@
 class Api::GaragesController < ApplicationController
+	rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
 	before_action :authenticate
 
 	def index
@@ -7,8 +8,18 @@ class Api::GaragesController < ApplicationController
 	end
 
 	def show
-		@garage = Garage.find(params[:id])
-		render json: @garage
+		if params[:user_id]
+			@user = User.find(params[:user_id])
+			@garage = @user.garages.find(params[:id])
+		else
+			@garage = Garage.find(params[:id])
+		end
+
+		if @garage
+			render json: @garage
+		else
+			render json: @garage.errors.full_messages, status: 404
+		end
 	end
 
 	def create
@@ -44,7 +55,12 @@ class Api::GaragesController < ApplicationController
 	end
 
 	def destroy
-		@garage = Garage.find(params[:id])
+		if params[:user_id]
+			@user = User.find(params[:user_id])
+			@garage = @user.garages.find(params[:id])
+		else
+			@garage = Garage.find(params[:id])
+		end
 
 		if @garage.destroy
 			render json: @garage, status: 204
@@ -54,6 +70,13 @@ class Api::GaragesController < ApplicationController
 	private
 	def garage_params
 		params.require(:garage).permit( :name )
+	end
+
+	def record_not_found(error)
+		render json: {
+			error: "Record Not Found",
+			message: error.message
+		}, status: 404
 	end
 
 	def authenticate
