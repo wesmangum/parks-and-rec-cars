@@ -36,6 +36,7 @@ RSpec.describe Api::GaragesController, type: :controller do
 			get :index
 
 			expect(response.body).to include("Andy's Garage")
+			expect(response.body).to include("Leslie's Garage")
 		end
 
 		it "should return the single, correct garage" do
@@ -63,9 +64,9 @@ RSpec.describe Api::GaragesController, type: :controller do
 
 	  		expect(response.status).to equal(204)
 
-	  		get :show, id: garage_1.id
+	  		@garage = Garage.find(garage_1.id)
 
-	  		expect(response.body).to include('Newer Garage')
+	  		expect(@garage.name).to eq('Newer Garage')
 	  	end
 
 	  	it 'should delete a garage from the database' do
@@ -109,6 +110,17 @@ RSpec.describe Api::GaragesController, type: :controller do
 				},
 				:id => garage_2
 			}
+
+			expect(response.status).to equal(403)
+			expect(response.body).to include("not allowed to update?")
+			expect(response.body).to include("Andy's Garage")
+
+			@garage = Garage.find_by_id( garage_2 )
+			expect(@garage.name).to eq("Andy's Garage")
+		end
+
+		it "should try to delete a garage and return an error when auth token is incorrect" do
+			delete :destroy, id: garage_2.id
 
 			expect(response.status).to equal(403)
 			expect(response.body).to include("not allowed to update?")
