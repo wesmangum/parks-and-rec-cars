@@ -59,5 +59,6 @@ Rails.application.routes.draw do
       resources :cars
     end
     resources :users
+    post "/users/login" => "users#login"
   end
 end

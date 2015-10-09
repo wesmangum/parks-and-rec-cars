@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151008201412) do
+ActiveRecord::Schema.define(version: 20151008232208) do
 
   create_table "cars", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -31,10 +31,11 @@ ActiveRecord::Schema.define(version: 20151008201412) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
     t.string   "email"
     t.string   "password"
+    t.string   "authentication_token"
   end
 
 end
