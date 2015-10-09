@@ -33,9 +33,8 @@ RSpec.describe Api::UsersController, type: :controller do
 	end
 
 	describe "Sad Path" do
-		it 'should try and create a new user with no password and error out' do
+		it 'should try and create a new user with no email and error out' do
 			post :create, :api_user => {
-				email: "",
 				password: "pancakes"
 			}
 
