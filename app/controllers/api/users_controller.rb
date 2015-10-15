@@ -27,7 +27,6 @@ class Api::UsersController < ApplicationController
 				authentication_token: @user.authentication_token
 			}, status: 201
 		else
-			puts @user.errors.full_messages
 			render json: {
 				errors: ["Incorrect Email/Password"]
 			}, status: 422
